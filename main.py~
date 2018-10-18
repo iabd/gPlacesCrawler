@@ -1,0 +1,61 @@
+import pdb
+import pandas as pd
+import requests
+import pprint
+import urllib
+import json
+import os
+from geopy import geocoders
+from bs4 import BeautifulSoup
+import functools
+from copy import deepcopy
+import urllib.request
+import json
+import crawler
+key = "AIzaSyASmGMElEZthlsMGEN-p3Nw1NInctWoXTk"
+types="restaurant"
+radius="1000"
+fields="name, formatted_address,rating"
+inputString="pizzeria"
+
+crawl=crawler.crawler(types=types, inputString=inputString,radius=radius,key=key)
+x=input('Press 1 for cities [faster] or 2 for Communes')
+if x==1:
+    if os.path.exists('italyCities.csv'):
+        citiesDF=pd.read_csv('italyCities.csv')
+    else:
+        crawl.getLocations()
+        citiesDF=crawl.cities
+       # print(citiesDF)
+        citiesDF.to_csv('italyCities.csv', index=False)
+
+    locationList=citiesDF.coordinates
+    #pdb.set_trace()
+    firstTime=True
+    for idx, location in enumerate(locationList):
+        #    pdb.set_trace()
+        if os.path.exists('citiesCrawl.csv'):
+            print('file already exists!')
+        else:
+            
+            cityData=crawl.fetchPlaces(location)
+            print("Got the location '\r{}".format(citiesDF.city[idx], end=''), "with length ",len(cityData) )
+            if firstTime:
+                csv=cityData
+                firstTime=False
+            else:
+                csv=csv.append(cityData)
+        
+            csv.to_csv('placesCrawl.csv')
+elif x==2:
+    if os.path.exists('italyCommunes.csv'):
+        communesDF=pd.read_csv('italyCommunes.csv')
+    else:
+        crawl.getCommunes()
+        communesDF=crawl.communes
+        communesDF.to_csv('italyCommunes.csv')
+        print('wrote to csv!', index=False)
+
+    locationList=citiesDF.coordinates
+    
+

@@ -112,4 +112,3 @@ class crawler:
             #     print(temp)
             data.cords[index] = str('{0:.6f}'.format(temp['location']['lat'])) + ',' + str('{0:.6f}'.format(temp['location']['lng']))
             print("\r{} / {}".format(index, len(data)), end='')
-        

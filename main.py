@@ -13,7 +13,7 @@ from copy import deepcopy
 import urllib.request
 import json
 import ssl
-key = "AIzaSyASmGMElEZthlsMGEN-p3Nw1NInctWoXTk"
+key = "-----------------------------------"
 types="restaurant"
 radius="1000"
 fields="name, formatted_address,rating"
@@ -37,7 +37,7 @@ def initiate(wid):
         print('Loaded successfully!')
     else:
         print('Fetching the list of {} and thier coordinates.'.format(wid))
-        getattr(crawl, 'get{}'.format(wid))()
+        crawl.getLocations(wid)
         locDF=getattr(crawl, wid)
         locDF.to_csv('italy{}.csv'.format(wid), index=False)
         print('Location fetched and saved as italy{}.csv. Time to crawl!'.format(wid))
@@ -49,7 +49,7 @@ def initiate(wid):
     else:
         print('Crawling for {} started.'.format(wid))
         for idx, location in enumerate(locationList):
-            tempData=crawl.fetchPlaces(location)
+            tempData=crawl.getPlaces(location)
             print("'\r{} \  {}".format(idx, len(locDF)), end='')
             if firstTime:
                 tempCSV=tempData
@@ -64,6 +64,3 @@ if choices[int(option)]:
     initiate(choices[int(option)])
 else:
     print('Invalid response! Exiting...')
-
-    
-        

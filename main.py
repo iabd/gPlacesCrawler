@@ -1,26 +1,19 @@
 import pdb
-import crawler
+import requests, pprint, json, urllib, os, functools, ssl, time
 import pandas as pd
-import requests
-import pprint
-import urllib
-import json
-import os
 from geopy import geocoders
 from bs4 import BeautifulSoup
-import functools
 from copy import deepcopy
-import urllib.request
-import json
 import ssl
-key = "-----------------------------------"
+import crawler
+key = "AIzaSyASmGMElEZthlsMGEN-p3Nw1NInctWoXTk"
 types="restaurant"
 radius="1000"
 fields="name, formatted_address,rating"
 inputString="pizzeria"
 
 crawl=crawler.crawler(types=types, inputString=inputString,radius=radius,key=key)
-
+dataOfInterest={"name", "geometry", "place_id", "rating", "types", "vicinity", "reviews"}
 manual = """
 Hello!
 Press 1 for crawling cities. [There are 144 cities in Italy]
@@ -38,29 +31,46 @@ def initiate(wid):
     else:
         print('Fetching the list of {} and thier coordinates.'.format(wid))
         crawl.getLocations(wid)
+       # pdb.set_trace()
         locDF=getattr(crawl, wid)
         locDF.to_csv('italy{}.csv'.format(wid), index=False)
         print('Location fetched and saved as italy{}.csv. Time to crawl!'.format(wid))
 
-    locationList=locDF.cods
+    locationList=list(locDF.cods)
     firstTime=True
     if os.path.exists('crawl{}.csv'.format(wid)):
         print('Locations acquired from {} already exist, and saved as crawl{}.csv Loading data..'.format(wid, wid))
+        #data=pd.read_csv('crawl{}.csv'.format(wid))
     else:
         print('Crawling for {} started.'.format(wid))
         for idx, location in enumerate(locationList):
             tempData=crawl.getPlaces(location)
+            #time.sleep(0.5)
             print("'\r{} \  {}".format(idx, len(locDF)), end='')
             if firstTime:
                 tempCSV=tempData
                 firstTime=False
             else:
                 tempCSV=tempCSV.append(tempData)
+        #    pdb.set_trace()
+       # breakpoint()
         tempCSV.to_csv('crawl{}.csv'.format(wid), index=False)
-        print('crawl file saved as crawl{}.csv successfully!'.format(wid))
+        print('\nCrawl file saved as crawl{}.csv successfully!'.format(wid))
  
-if choices[int(option)]:
+if option in range(0:3):
     print('initiating...')
     initiate(choices[int(option)])
+    df=pd.read_csv('crawl{}.csv'.format(choices[int(option)]))
 else:
     print('Invalid response! Exiting...')
+    sys.exit(0)
+
+print('Cleaning data')
+if os.path.exists('cleanedData.csv'):
+    print('Cleaned data already exists. Loading and proceeding')
+    cleanedData=pd.read_csv('cleanedData.csv')
+else:
+    print('Cleaning Data')
+    cleanedData=crawl.cleanData(df, dataOfInterest)
+    cleaned.to_csv('cleanedData.csv', index=False)
+    print("data cleaned and saved as 'cleanedData.csv'")

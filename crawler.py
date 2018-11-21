@@ -1,3 +1,5 @@
+import requests, pprint, json, urllib, os, functools, ssl, time
+import pandas as pd
 class crawler:
     Cities=[]
     places=[]
@@ -11,6 +13,7 @@ class crawler:
         self.country='it'
 
     def getCords(locationData):
+        "Get the list of geographical coordinates from the name of given location"
         for loc in locationData:
             try:
                 from urllib.parse import quote_plus
@@ -31,8 +34,7 @@ class crawler:
     
 
     def getLocations(self, locID):
-        import ssl, urllib, json, pandas as pd
-        from bs4 import BeautifulSoup
+        "Get teh list of cities/communes of Italy"
         ssl._create_default_https_context = ssl._create_unverified_context
         if locID=="Communes":
             ssl._create_default_https_context=ssl._create_unverified_context
@@ -68,13 +70,8 @@ class crawler:
         return cords
 
     def getPlaces(self, location):
-        import urllib, json
-        import ssl
-        import urllib
-        from bs4 import BeautifulSoup
-        import pandas as pd
-        from geopy import geocoders
-        import time
+        "Get the list of places eg. Pizzeria, Museums etc. from the given location"
+    
         ssl._create_default_https_context = ssl._create_unverified_context
         url = ('https://maps.googleapis.com/maps/api/place/nearbysearch/json'
                    '?location=%s'
@@ -101,8 +98,11 @@ class crawler:
 
         return x
 
-    def cleanData(self, dataFrame):
-        data=data.drop(['icon', 'id', 'opening_hours', 'photos', 'plus_code', 'price_level', 'reference', 'scope'], axis=1)
+    def cleanData(self, dataFrame, dataOfInterest):
+        toBeDeleted=[temp for temp in list(dataFrame.columns) if temp not in dataOfInterest]
+        data=dataFrame.drop(toBeDeleted, axis=1)
+        print('Deleted items not in dataOfInterest')
+        print('Fixing geometry')
         data['cords'] = 'NA'
         print("cleaning data...")
         for index in range(len(data)):
@@ -112,4 +112,8 @@ class crawler:
             #     print(temp)
             data.cords[index] = str('{0:.6f}'.format(temp['location']['lat'])) + ',' + str('{0:.6f}'.format(temp['location']['lng']))
             print("\r{} / {}".format(index, len(data)), end='')
+        return data
+        
+    def getPlaceDetails(self, searchKeys):
+        "Get the details of the places"
         

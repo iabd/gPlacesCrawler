@@ -95,7 +95,6 @@ class crawler:
             z=pd.concat([x, y], ignore_index=True)
             self.places=z
             return z
-
         return x
 
     def cleanData(self, dataFrame, dataOfInterest):

@@ -57,7 +57,7 @@ def initiate(wid):
         tempCSV.to_csv('crawl{}.csv'.format(wid), index=False)
         print('\nCrawl file saved as crawl{}.csv successfully!'.format(wid))
  
-if option in range(0:3):
+if choices[int(option)]:
     print('initiating...')
     initiate(choices[int(option)])
     df=pd.read_csv('crawl{}.csv'.format(choices[int(option)]))
@@ -65,7 +65,6 @@ else:
     print('Invalid response! Exiting...')
     sys.exit(0)
 
-print('Cleaning data')
 if os.path.exists('cleanedData.csv'):
     print('Cleaned data already exists. Loading and proceeding')
     cleanedData=pd.read_csv('cleanedData.csv')
@@ -74,3 +73,11 @@ else:
     cleanedData=crawl.cleanData(df, dataOfInterest)
     cleaned.to_csv('cleanedData.csv', index=False)
     print("data cleaned and saved as 'cleanedData.csv'")
+
+reviewersList=getReviewers(cleanedData.place_id, fields, key)
+cleanedData['reviewers']="NA"
+fields="name,rating,reviews"
+for idx, value in enumerate(reviewersList):
+    cleanedData.reviewers[idx]=value
+
+cleanedData.to_csv('finalData', index=False)

@@ -114,6 +114,22 @@ class crawler:
             print("\r{} / {}".format(index, len(data)), end='')
         return data
         
-    def getPlaceDetails(self, searchKeys):
+    def getReviews(self, placeIDs, fields, key):
         "Get the details of the places"
+        reviewersList=[]
+        for idx, placeID in enumerate(placeIDs):
+            print("\r{} / {}".format(idx, len(placeIDs)), end='')
+            tempReviewers=[]
+            url="https://maps.googleapis.com/maps/api/place/details/json?placeid={}&fields={}&key={}".format(placeID, fields, key)
+            response = urllib.request.urlopen(url).read()
+            jsonResponse = json.loads(response.decode('utf-8'))
+            result = jsonResponse['result']
+            try: 
+                reviewersTemp=[temp['author_name'] for temp in result['reviews']]
+                for temp in reviewersTemp:
+                    tempReviewers.extend(temp.split())
+                reviewersList.append(tempReviewers)
+            except:
+                reviewersList.append(['Mr. Hoodoo'])
+        return reviewersList
         

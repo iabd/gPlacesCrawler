@@ -114,7 +114,7 @@ class crawler:
             print("\r{} / {}".format(index, len(data)), end='')
         return data
         
-    def getReviews(self, placeIDs, fields, key):
+    def getReviewers(self, placeIDs, fields, key):
         "Get the details of the places"
         reviewersList=[]
         for idx, placeID in enumerate(placeIDs):

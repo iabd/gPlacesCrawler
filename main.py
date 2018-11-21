@@ -1,7 +1,7 @@
 import pdb
 import requests, pprint, json, urllib, os, functools, ssl, time
 import pandas as pd
-from geopy import geocoders
+#from geopy import geocoders
 from bs4 import BeautifulSoup
 from copy import deepcopy
 import ssl
@@ -9,7 +9,7 @@ import crawler
 key = "AIzaSyASmGMElEZthlsMGEN-p3Nw1NInctWoXTk"
 types="restaurant"
 radius="1000"
-fields="name, formatted_address,rating"
+fields="name,formatted_address,rating"
 inputString="pizzeria"
 
 crawl=crawler.crawler(types=types, inputString=inputString,radius=radius,key=key)
@@ -74,10 +74,12 @@ else:
     cleaned.to_csv('cleanedData.csv', index=False)
     print("data cleaned and saved as 'cleanedData.csv'")
 
-reviewersList=getReviewers(cleanedData.place_id, fields, key)
+#pdb.set_trace()
 cleanedData['reviewers']="NA"
-fields="name,rating,reviews"
+fields2="name,rating,reviews"
+reviewersList=crawl.getReviewers(cleanedData.place_id, fields2, key)
+#pdb.set_trace()
 for idx, value in enumerate(reviewersList):
     cleanedData.reviewers[idx]=value
-
-cleanedData.to_csv('finalData', index=False)
+    cleanedData.to_csv('brokenFinalData.csv', index=False)
+cleanedData.to_csv('finalData.csv', index=False)

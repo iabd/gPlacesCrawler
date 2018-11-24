@@ -65,16 +65,17 @@ else:
     print('Invalid response! Exiting...')
     sys.exit(0)
 
-if os.path.exists('cleanedData.csv'):
-    print('Cleaned data already exists. Loading and proceeding')
-    cleanedData=pd.read_csv('cleanedData.csv')
+if os.path.exists('cleaned{}.csv'.format(choices[int(option)])):
+    print('cleaned{} data already exists. Loading and proceeding'.format(choices[int(option)]))
+    cleanedData=pd.read_csv('cleaned{}.csv'.format(choices[int(option)]))
 else:
     print('Cleaning Data')
     cleanedData=crawl.cleanData(df, dataOfInterest)
-    cleaned.to_csv('cleanedData.csv', index=False)
-    print("data cleaned and saved as 'cleanedData.csv'")
+    cleanedData.to_csv('cleaned{}.csv'.format(choices[int(option)]), index=False)
+    print("data cleaned and saved")
 
 #pdb.set_trace()
+print("\nfetching reviewers .. ")
 cleanedData['reviewers']="NA"
 fields2="name,rating,reviews"
 reviewersList=crawl.getReviewers(cleanedData.place_id, fields2, key)

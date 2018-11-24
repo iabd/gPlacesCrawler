@@ -122,9 +122,8 @@ class crawler:
             url="https://maps.googleapis.com/maps/api/place/details/json?placeid={}&fields={}&key={}".format(placeID, fields, key)
             response = urllib.request.urlopen(url).read()
             jsonResponse = json.loads(response.decode('utf-8'))
-          #  result = jsonResponse['result']
+            result = jsonResponse['result']
             try: 
-                result=jsonRespnse['result']
                 reviewersTemp=[temp['author_name'] for temp in result['reviews']]
                 for temp in reviewersTemp:
                     tempReviewers.extend(temp.split())
